@@ -13,5 +13,8 @@
     ],
     "autoload": {
         "psr-0": {"Joomlatools\\": "/"}
+    },
+    "require": {
+        "symfony/yaml": "3.3"
     }
 }

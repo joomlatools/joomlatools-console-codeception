@@ -1,0 +1,29 @@
+class_name: WebGuy
+modules:
+    enabled:
+        - WebDriver
+        - Db
+        - Cli
+        - REST:
+            depends: PhpBrowser
+            part: Json
+        - Helper\DbHelper
+        - Helper\MailCatcherHelper:
+            email_url: 'http://33.33.33.58:1080/messages'
+    config:
+        WebDriver:
+            url: 'Paul'
+            browser: 'chrome'
+            window_size: '1024x768'
+        REST:
+            depends: PhpBrowser
+            part: Json
+        Db:
+            dsn: 'mysql:host=33.33.33.58;dbname=%s'
+            user: 'root'
+            password: 'root'
+            populate: true # run populator before all tests
+            cleanup: true # run populator before each test
+            populator: 'mysql -u $user -p$password -h $host $dbname < $dump'
+
+
