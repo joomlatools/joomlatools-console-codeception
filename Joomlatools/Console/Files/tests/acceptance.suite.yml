@@ -11,8 +11,9 @@ modules:
         - Helper\MailCatcherHelper:
             email_url: 'http://33.33.33.58:1080/messages'
     config:
+        SiteName: ''
         WebDriver:
-            url: 'Paul'
+            url: ''
             browser: 'chrome'
             window_size: '1024x768'
         REST:

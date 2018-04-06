@@ -35,7 +35,7 @@ class LoginElements
 
     public static $forgot_submit_button = 'Submit';
 
-    public static $forgot_email_subject = 'Your joomlatools password reset request';
+    public static $forgot_email_subject = 'Your %s password reset request';
 
 
     //admin side

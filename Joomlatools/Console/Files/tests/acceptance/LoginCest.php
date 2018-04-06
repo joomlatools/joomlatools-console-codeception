@@ -6,11 +6,14 @@ class LoginCest
 {
     protected $settings;
 
+    protected $siteName;
+
     protected function _inject()
     {
         $config = \Codeception\Configuration::config();
         $acceptanceSettings = \Codeception\Configuration::suiteSettings('acceptance', $config);
 
+        $this->siteName = $acceptanceSettings['modules']['config']['SiteName'];
         $this->settings = $acceptanceSettings;
     }
 
@@ -38,7 +41,7 @@ class LoginCest
     {
         $I->RequestPasswordReminder();
 
-        $I->checkEmails(array('email' => "<user@example.com>", 'search' => 'subject', 'value' => LoginElements::$forgot_email_subject));
+        $I->checkEmails(array('email' => "<user@example.com>", 'search' => 'subject', 'value' => sprintf(LoginElements::$forgot_email_subject, $this->siteName)));
     }
 
     public function LoginAdminEnd(\Step\Acceptance\Login $I, \Codeception\Scenario $scenario)
