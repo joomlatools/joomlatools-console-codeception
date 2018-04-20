@@ -84,12 +84,12 @@ else
 fi
 
 echo "\n${GREEN}*********SUCCESS***********${END}"
-echo "You system is configured for codeception!"
+echo "${GREEN}You system is configured for codeception!${END}"
 
 echo "\n${YELLOW}Next here are some aliases for you to create...${END}\n"
 
 echo "alias joomlatoolsTunnel='ssh -f vagrant@33.33.33.71 -L 3306:127.0.0.1:3306 -N'\n"
-echo "This will allow you to remote tunnel into the vagrant box database, essential for restoring databases back to a initial state\n\n"
+echo "${YELLOW}This will allow you to remote tunnel into the vagrant box database, essential for restoring databases back to a initial state${END}\n\n"
 
 echo "alias run-selenium='selenium-server > /dev/null 2>&1'\n"
-echo "This will run the server in the background so you can continue in the same Terminal window"
+echo "${YELLOW}This will run the server in the background so you can continue in the same Terminal window${END}"
