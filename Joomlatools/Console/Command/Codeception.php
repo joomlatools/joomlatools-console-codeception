@@ -17,7 +17,7 @@ use Joomlatools\Console\Command\Site\AbstractSite;
 
 class Codeception extends AbstractSite
 {
-    protected static $files;
+    protected $paths;
 
     protected $config;
 
@@ -33,10 +33,6 @@ class Codeception extends AbstractSite
     {
         parent::configure();
 
-        if (empty(self::$files)) {
-            self::$files = self::getFilesPath();
-        }
-
         $this
             ->setName('codeception:init')
             ->setDescription('Create a new codeception project for your site')
@@ -47,48 +43,71 @@ class Codeception extends AbstractSite
     {
         parent::execute($input, $output);
 
-        $path                       = self::$files;
-        $this->config               = $path . DIRECTORY_SEPARATOR . 'codeception.yml';
-        $this->check_host_script    = $path . DIRECTORY_SEPARATOR . 'check_host_machine_requirements.sh';
-        $this->tests                = $path . DIRECTORY_SEPARATOR . 'tests';
-        $this->dest                 = $this->target_dir . DIRECTORY_SEPARATOR;
-        $this->tests_dest           = $this->dest . 'tests';
+        $this->paths = $this->getFilePaths();
 
         $this->check($input, $output);
 
-        //lets copy over the original files and folders
-        `cp $this->config $this->dest`;
-        `cp -R $this->tests $this->tests_dest`;
-        `cp $this->check_host_script $this->dest`;
+        $output->writeln("<info>Downloading barebones codeception</info>");
 
-        //now that we've coped the files there are acceptance test configs that need to be updated
+        $this->cloneCodeception();
+
+        $output->writeLn("<info>Configuring codeception</info>");
+
+        $this->configureCodeception();
+
+        $output->writeLn("<info>Finalising installation");
+
+        $this->finalise($input, $output);
+    }
+    
+    protected function cloneCodeception()
+    {
+        $paths = $this->paths;
+
+        exec("git clone https://github.com/yiendos/barebones-codeception.git $paths->tmp");
+
+        `cp $paths->config $paths->dest`;
+        `cp -R $paths->tests $paths->tests_dest`;
+        `cp $paths->check_host_script $paths->dest`;
+    }
+
+    protected function configureCodeception()
+    {
         $host_name = $this->site . ".test";
         $db_name = "sites_" . $this->site;
 
-        $update_configs = Yaml::parse(file_get_contents($this->tests_dest . DIRECTORY_SEPARATOR . 'acceptance.suite.yml'));
+        $update_configs = Yaml::parse(file_get_contents($this->paths->tests_dest . DIRECTORY_SEPARATOR . 'acceptance.suite.yml'));
+
         $update_configs['modules']['config']['SiteName'] = "$this->site";
         $update_configs['modules']['config']['WebDriver']['url'] = "http://" . $host_name;
-        $update_configs['modules']['config']['Db']['dsn'] = sprintf($update_configs['modules']['config']['Db']['dsn'], $db_name);
+        $update_configs['modules']['config']['Db']['dsn'] = str_replace('sites_joomlatools', $db_name, $update_configs['modules']['config']['Db']['dsn']);
         $yaml = Yaml::dump($update_configs, 5);
 
         file_put_contents($this->target_dir . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'acceptance.suite.yml', $yaml);
+    }
+
+    protected function finalise(InputInterface $input, OutputInterface $output)
+    {
+        $paths = $this->paths;
+        //now lets remove the /tmp files
+        `rm -R -f $paths->tmp`;
 
         $output->writeLn('<info>Codeception project created.</info>');
         $output->writeLn('<comment>We suggested you run the following bash script, as this will check your host machine to see you are set up correctly for codeception tests:</comment>');
         $output->writeLn( 'www' . DIRECTORY_SEPARATOR . $this->site . DIRECTORY_SEPARATOR . "check_host_machine_requirements.sh");
 
-        $output->writeLn('<info>After that you can run your tests at any time:</info>');
+        $output->writeLn('<comment>After that you can run your tests at any time:</comment>');
         $output->writeLn('codecept run acceptance');
     }
 
     protected function check(InputInterface $input, OutputInterface $output)
     {
-        $configuration = $this->dest . "codeception.yml";
-        $tests = $this->tests_dest;
+        $configuration = $this->paths->dest . "codeception.yml";
+        $tests = $this->paths->tests_dest;
 
         if (file_exists($configuration))
         {
-            `rm $this->configuration`;
+            `rm $configuration`;
             //throw new \RuntimeException('Codeception is already installed');
             //return;
         }
@@ -101,12 +120,27 @@ class Codeception extends AbstractSite
         }
     }
 
-    public static function getFilesPath()
+    protected function getFilePaths()
     {
         $path = dirname(__DIR__);
 
-        if (!empty($path)) {
-            return $path . DIRECTORY_SEPARATOR . 'Files';
+        if (!empty($path))
+        {
+            $path .= DIRECTORY_SEPARATOR;
+
+            $tmp    = $path . "tmp" . DIRECTORY_SEPARATOR . "barebones-codception" . DIRECTORY_SEPARATOR;
+            $dest   = $this->target_dir . DIRECTORY_SEPARATOR;
+
+            $paths = array(
+                'tmp'               => $tmp,
+                'config'            => $tmp . 'codeception.yml',
+                'tests'             => $tmp . 'tests',
+                'check_host_script' => $path . 'Files' . DIRECTORY_SEPARATOR . 'check_host_machine_requirements.sh',
+                'dest'              => $dest,
+                'tests_dest'        => $dest . 'tests'
+            );
+
+            return (object) $paths;
         }
     }
 }
