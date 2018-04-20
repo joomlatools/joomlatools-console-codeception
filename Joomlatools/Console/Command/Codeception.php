@@ -135,7 +135,7 @@ class Codeception extends AbstractSite
                 'tmp'               => $tmp,
                 'config'            => $tmp . 'codeception.yml',
                 'tests'             => $tmp . 'tests',
-                'check_host_script' => $path . 'Files' . DIRECTORY_SEPARATOR . 'check_host_machine_requirements.sh',
+                'check_host_script' => $tmp . 'check_host_machine_requirements.sh',
                 'dest'              => $dest,
                 'tests_dest'        => $dest . 'tests'
             );
