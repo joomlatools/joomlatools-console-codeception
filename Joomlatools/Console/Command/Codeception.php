@@ -77,9 +77,9 @@ class Codeception extends AbstractSite
         $db_name = "sites_" . $this->site;
 
         $update_configs = Yaml::parse(file_get_contents($this->paths->tests_dest . DIRECTORY_SEPARATOR . 'acceptance.suite.yml'));
-
-        $update_configs['modules']['config']['SiteName'] = "$this->site";
+        
         $update_configs['modules']['config']['WebDriver']['url'] = "http://" . $host_name;
+        $update_configs['modules']['config']['WebDriver']['site'] = $this->site;
         $update_configs['modules']['config']['Db']['dsn'] = str_replace('sites_joomlatools', $db_name, $update_configs['modules']['config']['Db']['dsn']);
 
         $yaml = Yaml::dump($update_configs, 5);
