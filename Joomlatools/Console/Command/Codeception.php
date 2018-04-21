@@ -35,7 +35,7 @@ class Codeception extends AbstractSite
 
         $this
             ->setName('codeception:bootstrap')
-            ->setDescription('Create a new codeception project for your site')
+            ->setDescription('Create a new codeception acceptance suite project for your Joomla site')
             ;
     }
 
@@ -90,6 +90,7 @@ class Codeception extends AbstractSite
     protected function finalise(InputInterface $input, OutputInterface $output)
     {
         $paths = $this->paths;
+
         //now lets remove the /tmp files
         `rm -R -f $paths->tmp`;
 
@@ -108,16 +109,14 @@ class Codeception extends AbstractSite
 
         if (file_exists($configuration))
         {
-            `rm $configuration`;
-            //throw new \RuntimeException('Codeception is already installed');
-            //return;
+            throw new \RuntimeException('Codeception is already installed');
+            return;
         }
 
         if (is_dir($tests))
         {
-            `rm -R -f $tests`;
-            //throw new \RuntimeException('Codeception tests folder already exists');
-            //return;
+            throw new \RuntimeException('Codeception tests folder already exists');
+            return;
         }
     }
 
