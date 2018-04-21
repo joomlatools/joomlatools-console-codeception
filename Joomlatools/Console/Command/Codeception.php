@@ -96,7 +96,7 @@ class Codeception extends AbstractSite
 
         $output->writeLn('<info>Codeception project created.</info>');
         $output->writeLn('<comment>We suggested you run the following bash script, as this will check your host machine to see you are set up correctly for codeception tests:</comment>');
-        $output->writeLn( 'sh www' . DIRECTORY_SEPARATOR . $this->site . DIRECTORY_SEPARATOR . "check_host_machine_requirements.sh");
+        $output->writeLn( 'sh ' . $this->www . DIRECTORY_SEPARATOR . $this->site . DIRECTORY_SEPARATOR . "check_host_machine_requirements.sh");
 
         $output->writeLn('<comment>After that you can run your tests at any time:</comment>');
         $output->writeLn('codecept run acceptance');
