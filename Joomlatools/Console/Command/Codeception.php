@@ -34,7 +34,7 @@ class Codeception extends AbstractSite
         parent::configure();
 
         $this
-            ->setName('codeception:init')
+            ->setName('codeception:bootstrap')
             ->setDescription('Create a new codeception project for your site')
             ;
     }
@@ -81,6 +81,7 @@ class Codeception extends AbstractSite
         $update_configs['modules']['config']['SiteName'] = "$this->site";
         $update_configs['modules']['config']['WebDriver']['url'] = "http://" . $host_name;
         $update_configs['modules']['config']['Db']['dsn'] = str_replace('sites_joomlatools', $db_name, $update_configs['modules']['config']['Db']['dsn']);
+
         $yaml = Yaml::dump($update_configs, 5);
 
         file_put_contents($this->target_dir . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'acceptance.suite.yml', $yaml);
@@ -94,7 +95,7 @@ class Codeception extends AbstractSite
 
         $output->writeLn('<info>Codeception project created.</info>');
         $output->writeLn('<comment>We suggested you run the following bash script, as this will check your host machine to see you are set up correctly for codeception tests:</comment>');
-        $output->writeLn( 'www' . DIRECTORY_SEPARATOR . $this->site . DIRECTORY_SEPARATOR . "check_host_machine_requirements.sh");
+        $output->writeLn( 'sh www' . DIRECTORY_SEPARATOR . $this->site . DIRECTORY_SEPARATOR . "check_host_machine_requirements.sh");
 
         $output->writeLn('<comment>After that you can run your tests at any time:</comment>');
         $output->writeLn('codecept run acceptance');
