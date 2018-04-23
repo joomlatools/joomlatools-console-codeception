@@ -17,13 +17,13 @@ Installation
 
 	`$ joomla plugin:list`
 
-* You can now deploy an existing Codeception project by:
+* You can now create a new Codeception project by:
 
 	`$ joomla codeception:bootstrap sitename`
 
 * For available options, run
 
-   `$ joomla help Codeception:deploy`
+   `$ joomla help Codeception:bootstrap`
    
 * If you would like to hook up an existing Joomlatools Project/ component simply use the `--www option`
   
