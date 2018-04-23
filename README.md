@@ -149,6 +149,8 @@ Append the following information to the list of installed dependancies:
 
 Then instruct composer to dump the existing autoloader and generate a new one with our plugin installed: 
 
+`cd /home/vagrant/.joomlatools/console/plugins/`
+
 `composer dump-autoload`
 
 Verify the development plugin has been found: 
