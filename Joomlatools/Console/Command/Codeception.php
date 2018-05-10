@@ -66,6 +66,7 @@ class Codeception extends AbstractSite
 
         exec("git clone https://github.com/yiendos/barebones-codeception.git $paths->tmp");
 
+        `mkdir -p $paths->tests_dest`;
         `cp $paths->config $paths->dest`;
         `cp -R $paths->tests $paths->tests_dest`;
         `cp $paths->check_host_script $paths->dest`;
@@ -76,7 +77,7 @@ class Codeception extends AbstractSite
         $host_name = $this->site . ".test";
         $db_name = "sites_" . $this->site;
 
-        $update_configs = Yaml::parse(file_get_contents($this->paths->tests_dest . DIRECTORY_SEPARATOR . 'acceptance.suite.yml'));
+        $update_configs = Yaml::parse(file_get_contents($this->paths->tests_dest . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'acceptance.suite.yml'));
         
         $update_configs['modules']['config']['WebDriver']['url'] = "http://" . $host_name;
         $update_configs['modules']['config']['WebDriver']['site'] = $this->site;
@@ -84,7 +85,7 @@ class Codeception extends AbstractSite
 
         $yaml = Yaml::dump($update_configs, 5);
 
-        file_put_contents($this->target_dir . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'acceptance.suite.yml', $yaml);
+        file_put_contents($this->paths->tests_dest . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'acceptance.suite.yml', $yaml);
     }
 
     protected function finalise(InputInterface $input, OutputInterface $output)
@@ -107,16 +108,15 @@ class Codeception extends AbstractSite
         $configuration = $this->paths->dest . "codeception.yml";
         $tests = $this->paths->tests_dest;
 
-        if (file_exists($configuration))
-        {
-            throw new \RuntimeException('Codeception is already installed');
-            return;
-        }
-
         if (is_dir($tests))
         {
             throw new \RuntimeException('Codeception tests folder already exists');
             return;
+        }
+
+        //newly created directory doesn't exist so dealing with default joomla acceptance config
+        if (file_exists($configuration)) {
+            `rm $configuration`;
         }
     }
 
@@ -137,7 +137,7 @@ class Codeception extends AbstractSite
                 'tests'             => $tmp . 'tests',
                 'check_host_script' => $tmp . 'check_host_machine_requirements.sh',
                 'dest'              => $dest,
-                'tests_dest'        => $dest . 'tests'
+                'tests_dest'        => $dest . 'joomlatools'
             );
 
             return (object) $paths;
