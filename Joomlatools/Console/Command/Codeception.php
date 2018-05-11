@@ -19,16 +19,6 @@ class Codeception extends AbstractSite
 {
     protected $paths;
 
-    protected $config;
-
-    protected $check_host_script;
-
-    protected $dest;
-
-    protected $tests;
-
-    protected $tests_dest;
-
     protected function configure()
     {
         parent::configure();
@@ -64,7 +54,7 @@ class Codeception extends AbstractSite
     {
         $paths = $this->paths;
 
-        exec("git clone https://github.com/yiendos/barebones-codeception.git $paths->tmp");
+        exec("git clone https://github.com/yiendos/barebones-codeception.git $paths->tmp  --quiet");
 
         `mkdir -p $paths->tests_dest`;
         `cp $paths->config $paths->dest`;
@@ -76,8 +66,9 @@ class Codeception extends AbstractSite
     {
         $host_name = $this->site . ".test";
         $db_name = "sites_" . $this->site;
+        $acceptance_config = $this->paths->tests_dest . DIRECTORY_SEPARATOR . 'acceptance.suite.yml';
 
-        $update_configs = Yaml::parse(file_get_contents($this->paths->tests_dest . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'acceptance.suite.yml'));
+        $update_configs = Yaml::parse(file_get_contents($acceptance_config));
         
         $update_configs['modules']['config']['WebDriver']['url'] = "http://" . $host_name;
         $update_configs['modules']['config']['WebDriver']['site'] = $this->site;
@@ -85,22 +76,25 @@ class Codeception extends AbstractSite
 
         $yaml = Yaml::dump($update_configs, 5);
 
-        file_put_contents($this->paths->tests_dest . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'acceptance.suite.yml', $yaml);
+        file_put_contents($acceptance_config, $yaml);
     }
 
     protected function finalise(InputInterface $input, OutputInterface $output)
     {
         $paths = $this->paths;
+        $check_host_path = str_replace('/var/', '', $this->www) . DIRECTORY_SEPARATOR . $this->site . DIRECTORY_SEPARATOR . "check_host_machine_requirements.sh";
 
         //now lets remove the /tmp files
         `rm -R -f $paths->tmp`;
 
         $output->writeLn('<info>Codeception project created.</info>');
+        $output->writeLn('');
         $output->writeLn('<comment>We suggested you run the following bash script, as this will check your host machine to see you are set up correctly for codeception tests:</comment>');
-        $output->writeLn( 'sh ' . $this->www . DIRECTORY_SEPARATOR . $this->site . DIRECTORY_SEPARATOR . "check_host_machine_requirements.sh");
-
+        $output->writeLn( "`sh $check_host_path`");
+        $output->writeLn('');
         $output->writeLn('<comment>After that you can run your tests at any time:</comment>');
-        $output->writeLn('codecept run acceptance');
+        $output->writeLn('`selenium-server`');
+        $output->writeLn('`codecept run acceptance`');
     }
 
     protected function check(InputInterface $input, OutputInterface $output)
@@ -128,16 +122,16 @@ class Codeception extends AbstractSite
         {
             $path .= DIRECTORY_SEPARATOR;
 
-            $tmp    = $path . "tmp" . DIRECTORY_SEPARATOR . "barebones-codception" . DIRECTORY_SEPARATOR;
+            $tmp    = $path . "tmp" . DIRECTORY_SEPARATOR . "barebones-codeception" . DIRECTORY_SEPARATOR;
             $dest   = $this->target_dir . DIRECTORY_SEPARATOR;
 
             $paths = array(
                 'tmp'               => $tmp,
                 'config'            => $tmp . 'codeception.yml',
-                'tests'             => $tmp . 'tests',
+                'tests'             => $tmp . 'tests'. DIRECTORY_SEPARATOR . ".",
                 'check_host_script' => $tmp . 'check_host_machine_requirements.sh',
                 'dest'              => $dest,
-                'tests_dest'        => $dest . 'joomlatools'
+                'tests_dest'        => $dest . 'joomlatools-tests'
             );
 
             return (object) $paths;
