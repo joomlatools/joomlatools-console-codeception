@@ -54,8 +54,6 @@ class Codeception extends AbstractSite
     {
         $paths = $this->paths;
 
-        exec("git clone https://github.com/yiendos/barebones-codeception.git $paths->tmp  --quiet");
-
         `mkdir -p $paths->tests_dest`;
         `cp $paths->config $paths->dest`;
         `cp -R $paths->tests $paths->tests_dest`;
@@ -81,11 +79,7 @@ class Codeception extends AbstractSite
 
     protected function finalise(InputInterface $input, OutputInterface $output)
     {
-        $paths = $this->paths;
         $check_host_path = str_replace('/var/', '', $this->www) . DIRECTORY_SEPARATOR . $this->site . DIRECTORY_SEPARATOR . "check_host_machine_requirements.sh";
-
-        //now lets remove the /tmp files
-        `rm -R -f $paths->tmp`;
 
         $output->writeLn('<info>Codeception project created.</info>');
         $output->writeLn('');
@@ -121,15 +115,15 @@ class Codeception extends AbstractSite
         if (!empty($path))
         {
             $path .= DIRECTORY_SEPARATOR;
-
-            $tmp    = $path . "tmp" . DIRECTORY_SEPARATOR . "barebones-codeception" . DIRECTORY_SEPARATOR;
             $dest   = $this->target_dir . DIRECTORY_SEPARATOR;
 
+            $files = $path . "Files" . DIRECTORY_SEPARATOR;
+
             $paths = array(
-                'tmp'               => $tmp,
-                'config'            => $tmp . 'codeception.yml',
-                'tests'             => $tmp . 'tests'. DIRECTORY_SEPARATOR . ".",
-                'check_host_script' => $tmp . 'check_host_machine_requirements.sh',
+                'files'             => $files,
+                'config'            => $files . 'codeception.yml',
+                'tests'             => $files . 'tests'. DIRECTORY_SEPARATOR . ".",
+                'check_host_script' => $files . 'check_host_machine_requirements.sh',
                 'dest'              => $dest,
                 'tests_dest'        => $dest . 'joomlatools-tests'
             );
