@@ -1,0 +1,13 @@
+class_name: ApiTester
+modules:
+    enabled:
+        - \Helper\ApiHelper
+        - Asserts
+        - REST:
+            url: 'http://joomlatools.dev/'
+            depends: PhpBrowser
+            timeout: 90
+        - PhpBrowser:
+            url: ''
+            curl:
+                CURLOPT_TIMEOUT: 90
