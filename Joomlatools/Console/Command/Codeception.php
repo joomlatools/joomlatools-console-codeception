@@ -45,9 +45,7 @@ class Codeception extends AbstractSite
 
         $this->configureCodeception();
 
-        $output->writeLn("<info>Finalising installation");
-
-        $this->finalise($input, $output);
+        $output->writeLn('<info>Codeception project created.</info>');
     }
     
     protected function cloneCodeception()
@@ -57,7 +55,6 @@ class Codeception extends AbstractSite
         `mkdir -p $paths->tests_dest`;
         `cp $paths->config $paths->dest`;
         `cp -R $paths->tests $paths->tests_dest`;
-        `cp $paths->check_host_script $paths->dest`;
     }
 
     protected function configureCodeception()
@@ -75,20 +72,6 @@ class Codeception extends AbstractSite
         $yaml = Yaml::dump($update_configs, 5);
 
         file_put_contents($acceptance_config, $yaml);
-    }
-
-    protected function finalise(InputInterface $input, OutputInterface $output)
-    {
-        $check_host_path = str_replace('/var/', '', $this->www) . DIRECTORY_SEPARATOR . $this->site . DIRECTORY_SEPARATOR . "check_host_machine_requirements.sh";
-
-        $output->writeLn('<info>Codeception project created.</info>');
-        $output->writeLn('');
-        $output->writeLn('<comment>We suggested you run the following bash script, as this will check your host machine to see you are set up correctly for codeception tests:</comment>');
-        $output->writeLn( "`sh $check_host_path`");
-        $output->writeLn('');
-        $output->writeLn('<comment>After that you can run your tests at any time:</comment>');
-        $output->writeLn('`selenium-server`');
-        $output->writeLn('`codecept run acceptance`');
     }
 
     protected function check(InputInterface $input, OutputInterface $output)
@@ -123,7 +106,6 @@ class Codeception extends AbstractSite
                 'files'             => $files,
                 'config'            => $files . 'codeception.yml',
                 'tests'             => $files . 'tests'. DIRECTORY_SEPARATOR . ".",
-                'check_host_script' => $files . 'check_host_machine_requirements.sh',
                 'dest'              => $dest,
                 'tests_dest'        => $dest . 'joomlatools-tests'
             );
