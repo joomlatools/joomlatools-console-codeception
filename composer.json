@@ -1,0 +1,20 @@
+{
+    "name": "joomlatools/console-codeception",
+    "license": "MPLv2",
+    "description": "A simple plugin to install codeception projects for Joomla",
+    "homepage": "https://github.com/joomlatools/joomlatools-console-codeception",
+    "type": "joomlatools-console-plugin",
+    "authors": [
+        {
+            "name": "Joomlatools",
+            "email": "info@joomlatools.com",
+            "homepage": "https://www.joomlatools.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {"Joomlatools\\": "/"}
+    },
+    "require": {
+        "symfony/yaml": "3.3"
+    }
+}
