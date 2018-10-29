@@ -1,6 +1,6 @@
 {
     "name": "joomlatools/console-codeception",
-    "license": "MPLv2",
+    "license": "proprietary",
     "description": "A simple plugin to install codeception projects for Joomla",
     "homepage": "https://github.com/joomlatools/joomlatools-console-codeception",
     "type": "joomlatools-console-plugin",
